@@ -5,12 +5,9 @@ import me.redtea.factionrevolutions.types.RPlayer;
 import me.redtea.factionrevolutions.types.Revolution;
 
 public interface IDatabase {
-    String getRevolution(@NonNull String id);
+    Object getData(@NonNull DataType dataType, @NonNull String id);
 
-    void saveRevolution(@NonNull String id, Revolution value);
+    void saveData(@NonNull DataType dataType, @NonNull String id, Object value);
 
-    String getRPlayer(@NonNull String id);
-
-    void saveRPlayer(@NonNull String id, RPlayer value);
     void saveData();
 }

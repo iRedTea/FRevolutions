@@ -1,9 +1,8 @@
 package me.redtea.factionrevolutions.core;
 
-import me.redtea.factionrevolutions.db.DataType;
 import me.redtea.factionrevolutions.db.IDatabase;
-import me.redtea.factionrevolutions.db.impl.DataJson;
-import me.redtea.factionrevolutions.db.impl.DataSQL;
+import me.redtea.factionrevolutions.db.impl.json.DataJson;
+import me.redtea.factionrevolutions.db.impl.DataMySQL;
 
 import java.sql.SQLException;
 import java.util.Locale;
@@ -27,7 +26,7 @@ public class FRevolutionsCore {
                 plugin.getLog().sendLogger("Using JSON database.");
                 break;
             case "MYSQL":
-                db = new DataSQL(plugin);
+                db = new DataMySQL(plugin);
                 plugin.getLog().sendLogger("Using MYSQL database.");
             default: db = new DataJson(plugin);
         }
