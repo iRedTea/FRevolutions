@@ -1,0 +1,9 @@
+name: FactionRevolutions
+version: '${project.version}'
+main: me.redtea.factionrevolutions.FactionRevolutions
+api-version: 1.18
+depend: [ Factions ]
+softdepend: [ Vault ]
+authors: [ iRedTea ]
+description: Add revolutions to your server!
+website: https://github.com/iRedTea/FRevolutions
