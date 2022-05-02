@@ -6,7 +6,7 @@ public final class FactionRevolutions extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
+
 
     }
 
