@@ -1,13 +1,12 @@
 package me.redtea.factionrevolutions.db;
 
 import lombok.NonNull;
-import me.redtea.factionrevolutions.types.RPlayer;
-import me.redtea.factionrevolutions.types.Revolution;
+import me.redtea.factionrevolutions.types.*;
 
 public interface IDatabase {
-    Object getData(@NonNull DataType dataType, @NonNull String id);
 
-    void saveData(@NonNull DataType dataType, @NonNull String id, Object value);
+    <V extends Data> V getData(@NonNull Class<V> clazz, @NonNull String id);
+    <V extends Data> void saveData(@NonNull Class<V> clazz, @NonNull String id, V value);
 
     void saveData();
 }

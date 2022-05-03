@@ -4,12 +4,11 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import me.redtea.factionrevolutions.types.Revolution;
+import me.redtea.factionrevolutions.types.impl.Revolution;
 import me.redtea.factionrevolutions.types.Role;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Map;
@@ -38,12 +37,12 @@ public class JsonAdapter extends TypeAdapter<Object> {
 
 
 
-                out.name("x").value(value.getX());
-                out.name("y").value(value.getY());
-                out.name("z").value(value.getZ());
-
-                out.name("yaw").value(value.getYaw());
-                out.name("pitch").value(value.getPitch());
+//                out.name("x").value(value.getX());
+//                out.name("y").value(value.getY());
+//                out.name("z").value(value.getZ());
+//
+//                out.name("yaw").value(value.getYaw());
+//                out.name("pitch").value(value.getPitch());
 
                 out.endObject();
             }

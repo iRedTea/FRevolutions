@@ -7,23 +7,27 @@ import lombok.NonNull;
 import lombok.val;
 import me.redtea.factionrevolutions.db.DataType;
 import me.redtea.factionrevolutions.db.IDatabase;
-import me.redtea.factionrevolutions.db.impl.adapter.JsonAdapter;
+import me.redtea.factionrevolutions.db.impl.adapter.*;
+import me.redtea.factionrevolutions.types.*;
+import me.redtea.factionrevolutions.types.impl.*;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DataJson implements IDatabase {
+
     private static final Gson GSON = new GsonBuilder()
-            .registerTypeAdapter(Object.class, new JsonAdapter())
+            .registerTypeAdapter(Revolution.class, new RevolutionSerializer())
+            .registerTypeAdapter(RPlayer.class, new RPlayerSerializer())
             .setPrettyPrinting()
             .create();
 
     private final @NonNull Plugin plugin;
-    private Map<DataType, Map<String, Object>> dataMap = new HashMap<>();
+
+    private Map<Class<?>, Map<String, Data>> dataMap = new HashMap<>();
 
     public DataJson(@NonNull Plugin plugin) {
         this.plugin = plugin;
@@ -32,28 +36,26 @@ public class DataJson implements IDatabase {
 
         if(file.exists()) {
             try (FileReader fileReader = new FileReader(file)) {
-                val token = new TypeToken<Map<DataType, Map<String, Object>>>() {
-                };
+                val token = new TypeToken<Map<DataType, Map<String, Data>>>() {};
 
                 this.dataMap = GSON.fromJson(fileReader, token.getType());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-
-        for (DataType value : DataType.values()) {
-            this.dataMap.putIfAbsent(value, new HashMap<>());
-        }
     }
 
     @Override
-    public Object getData(@NonNull DataType dataType, @NonNull String id) {
-        return this.dataMap.get(dataType).get(id);
+    @SuppressWarnings("unchecked")
+    public <V extends Data> V getData(@NonNull Class<V> clazz, @NonNull String id) {
+        this.dataMap.putIfAbsent(clazz, new HashMap<>());
+        return (V) this.dataMap.get(clazz).get(id);
     }
 
     @Override
-    public void saveData(@NonNull DataType dataType, @NonNull String playerName, @NonNull Object value) {
-        this.dataMap.get(dataType).put(playerName, value);
+    public <V extends Data> void saveData(@NonNull Class<V> clazz, @NonNull String id, V value) {
+        this.dataMap.putIfAbsent(clazz, new HashMap<>());
+        this.dataMap.get(clazz).put(id, value);
     }
 
     @Override

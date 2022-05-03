@@ -1,0 +1,48 @@
+package me.redtea.factionrevolutions.db.impl.adapter;
+
+import com.google.gson.*;
+import me.redtea.factionrevolutions.types.impl.*;
+
+import java.lang.reflect.*;
+
+public class RPlayerSerializer implements JsonSerializer<RPlayer>, JsonDeserializer<RPlayer> {
+
+    @Override
+    public RPlayer deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
+        if(jsonElement.isJsonObject()) {
+            JsonObject jsonObject = jsonElement.getAsJsonObject();
+
+            String uuid = null, revolution = null;
+            boolean inRevolution = false;
+
+            if(jsonObject.has("uuid")) {
+                uuid = jsonObject.get("uuid").getAsString();
+            }
+
+            if(jsonObject.has("revolution")) {
+                revolution = jsonObject.get("revolution").getAsString();
+            }
+
+            if(jsonObject.has("inRevolution")) {
+                inRevolution = jsonObject.get("inRevolution").getAsBoolean();
+            }
+
+            return new RPlayer(uuid, inRevolution, revolution);
+        }
+        return null;
+    }
+
+    @Override
+    public JsonElement serialize(RPlayer player, Type type, JsonSerializationContext context) {
+        if(type != null) {
+            JsonObject jsonObject = new JsonObject();
+
+            jsonObject.addProperty("uuid", player.getUuid());
+            jsonObject.addProperty("revolution", player.getRevolution());
+            jsonObject.addProperty("inRevolution", player.isInRevolution());
+            
+            return jsonObject;
+        }
+        return null;
+    }
+}

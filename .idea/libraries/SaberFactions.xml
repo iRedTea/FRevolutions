@@ -1,9 +1,0 @@
-<component name="libraryTable">
-  <library name="SaberFactions">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/ dependencies/SaberFactions.jar!/" />
-    </CLASSES>
-    <JAVADOC />
-    <SOURCES />
-  </library>
-</component>

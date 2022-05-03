@@ -1,8 +1,7 @@
 package me.redtea.factionrevolutions.core;
 
 import me.redtea.factionrevolutions.db.IDatabase;
-import me.redtea.factionrevolutions.db.impl.json.DataJson;
-import me.redtea.factionrevolutions.db.impl.DataMySQL;
+import me.redtea.factionrevolutions.db.impl.*;
 
 import java.sql.SQLException;
 import java.util.Locale;
@@ -26,7 +25,7 @@ public class FRevolutionsCore {
                 plugin.getLog().sendLogger("Using JSON database.");
                 break;
             case "MYSQL":
-                db = new DataMySQL(plugin);
+                //db = new DataMySQL(plugin);
                 plugin.getLog().sendLogger("Using MYSQL database.");
             default: db = new DataJson(plugin);
         }
@@ -39,6 +38,6 @@ public class FRevolutionsCore {
     }
 
     public void removeRevolution(String id) {
-        db.saveRevolution(id, null);
+        //db.saveRevolution(id, null);
     }
 }
