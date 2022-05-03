@@ -46,18 +46,22 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                     }
                 }
 
+                String[] subArgs = {};
+                if(args.length > 1) subArgs = Arrays.copyOfRange(args, 1, args.length-1);
+
+
                 if(isMustBeProcessed) {
                     if(!Objects.equals(sub.permission(), "")) {
                         if(sender.hasPermission(sub.permission())) {
                             try {
-                                m.invoke(sender, Arrays.copyOfRange(args, 1, args.length-1));
+                                m.invoke(sender, subArgs);
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);
                             }
                         }
                     }
                     try {
-                        m.invoke(sender, Arrays.copyOfRange(args, 1, args.length-1));
+                        m.invoke(sender, subArgs);
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
