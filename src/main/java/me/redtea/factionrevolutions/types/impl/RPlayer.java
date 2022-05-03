@@ -15,16 +15,16 @@ import java.util.UUID;
 @AllArgsConstructor
 public class RPlayer implements Data {
 
-    private final String uuid;
+    private final UUID uuid;
     private boolean inRevolution;
     private String revolution;
 
     public Player getBukkitPlayer() {
-        return Bukkit.getPlayer(UUID.fromString(uuid));
+        return Bukkit.getPlayer(UUID.fromString(uuid.toString()));
     }
 
     public FPlayer getFPlayer() {
-        return FPlayers.getInstance().getById(uuid);
+        return FPlayers.getInstance().getById(uuid.toString());
     }
 
     public Faction getFaction() {

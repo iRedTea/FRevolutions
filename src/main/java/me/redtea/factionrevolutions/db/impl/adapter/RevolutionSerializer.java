@@ -40,7 +40,7 @@ public class RevolutionSerializer implements JsonSerializer<Revolution>, JsonDes
                 members = context.deserialize(jsonObject.getAsJsonPrimitive("members"), token.getType());
             }
 
-            return new Revolution(id, leader, roles, members);
+            return new Revolution(UUID.fromString(id), leader, roles, members);
         }
         return null;
     }
@@ -50,7 +50,7 @@ public class RevolutionSerializer implements JsonSerializer<Revolution>, JsonDes
         if(type != null) {
             JsonObject jsonObject = new JsonObject();
 
-            jsonObject.addProperty("id", revolution.getId());
+            jsonObject.addProperty("id", revolution.getId().toString());
             jsonObject.addProperty("leader", revolution.getLeader());
 
             jsonObject.add("roles", context.serialize(revolution.getRoles()));

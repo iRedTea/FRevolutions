@@ -13,7 +13,7 @@ import java.util.*;
 @ToString
 public class Revolution implements Data {
 
-    private final String id;
+    private final UUID id;
     private String leader;
     private HashMap<String, Role> roles;
     private ArrayList<String> members;
