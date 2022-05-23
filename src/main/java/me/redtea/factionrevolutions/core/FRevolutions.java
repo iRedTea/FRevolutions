@@ -86,7 +86,7 @@ public final class FRevolutions extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Message.load(YamlConfiguration.loadConfiguration(messages), PlaceholderAPIEnabled);
+        Message.load(messages, PlaceholderAPIEnabled);
 
         new FRevolutionsCommand(this);
         new RevolutionCommand(this);

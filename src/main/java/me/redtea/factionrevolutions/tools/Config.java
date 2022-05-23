@@ -71,13 +71,24 @@ public class Config {
         return debug;
     }
 
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 
     public boolean isSaveLogs() {
         return saveLogs;
     }
 
+    public void setSaveLogs(boolean saveLogs) {
+        this.saveLogs = saveLogs;
+    }
+
     public String getDatabase() {
         return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
     }
 
     public MySQLSettings getMySQLSettings() {

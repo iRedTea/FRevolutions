@@ -22,14 +22,18 @@ public class FRevolutionsCore {
     public void load() {
         String d = plugin.getConf().getDatabase().toUpperCase(Locale.ROOT);
         switch (d) {
-            case "JSON":
+            case "JSON" -> {
                 db = new DataJson(plugin);
                 plugin.getLog().sendLogger("Using JSON database.");
-                break;
-            case "MYSQL":
+            }
+            case "MYSQL" ->
                 //db = new DataMySQL(plugin);
                 plugin.getLog().sendLogger("Using MYSQL database.");
-            default: db = new DataJson(plugin);
+            default -> {
+                db = new DataJson(plugin);
+                plugin.getConf().setDatabase("JSON");
+                plugin.getLog().sendError("Unsupported database type in config.yml! Using JSON database.");
+            }
         }
     }
 

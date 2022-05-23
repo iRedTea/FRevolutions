@@ -1,14 +1,21 @@
 package me.redtea.factionrevolutions.tools;
 
 import com.google.common.collect.Lists;
+import com.massivecraft.factions.FactionsPlugin;
 import me.clip.placeholderapi.PlaceholderAPI;
+import me.redtea.factionrevolutions.core.FRevolutions;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.chat.ComponentSerializer;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,16 +31,54 @@ public enum Message {
     private boolean PAPI;
 
     @SuppressWarnings("unchecked")
-    public static void load(FileConfiguration c, boolean PAPIEnabled) {
+    public static void load(File file, boolean PAPIEnabled) {
+        FileConfiguration c = YamlConfiguration.loadConfiguration(file);
         for(Message message : Message.values()) {
             message.PAPI = PAPIEnabled;
-            Object obj = c.get("messages." + message.name().replace("_", "."));
-            if(obj instanceof List) {
-                message.msg = (((List<String>) obj)).stream().map(m -> ChatColor.translateAlternateColorCodes('&', m)).collect(Collectors.toList());
+            boolean needRecover = false;
+            try {
+                Object obj = c.get("messages." + message.name().replace("_", "."));
+                if(obj instanceof List) {
+                    message.msg = (((List<String>) obj)).stream().map(m -> ChatColor.translateAlternateColorCodes('&', m)).collect(Collectors.toList());
+                }
+                else {
+                    message.msg = Lists.newArrayList(obj == null ? "" : ChatColor.translateAlternateColorCodes('&', obj.toString()));
+                }
+            } catch (NullPointerException e) {
+                needRecover = true;
             }
-            else {
-                message.msg = Lists.newArrayList(obj == null ? "" : ChatColor.translateAlternateColorCodes('&', obj.toString()));
+
+        }
+    }
+
+    public void recover(File file) {
+        FileConfiguration c = YamlConfiguration.loadConfiguration(file);
+        for(Message message : Message.values()) {
+            boolean recover = false;
+            String path = "messages." + message.name().replace("_", ".");
+            try {
+                Object obj = c.get(path);
+                if(obj == null) recover = true;
+            } catch (Throwable e) {
+                recover = true;
             }
+            if(recover) {
+                Object value;
+                try {
+                    InputStream inputStream = FRevolutions.class.getResourceAsStream("messages.yml");
+                    Reader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    FileConfiguration defaultMsgFile = YamlConfiguration.loadConfiguration(reader);
+                    value = defaultMsgFile.get(path);
+                } catch (Throwable e) {
+                    value = 0;
+                }
+                c.set(path, value);
+            }
+        }
+        try {
+            c.save(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
