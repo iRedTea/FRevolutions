@@ -104,6 +104,7 @@ public final class FRevolutions extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        conf.saveConfig();
         if(core != null) {
             try {
                 core.close();

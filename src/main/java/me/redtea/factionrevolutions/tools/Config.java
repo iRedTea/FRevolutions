@@ -47,19 +47,22 @@ public class Config {
 
 
         for(Field f : this.getClass().getFields()) {
-            if(f.equals(null)) {
-                switch (f.getName()) {
-                    case "debug" -> debug = false;
-                    case "saveLogs" -> saveLogs = true;
-                    case "database" -> database = "JSON";
-                    case "mysqlsettings" -> mysqlsettings = new MySQLSettings(
-                                "localhost",
-                                3306,
-                                "name",
-                                "user",
-                                "password");
+            try {
+                if(f.get(this.getClass()).equals(null)) {
+                    switch (f.getName()) {
+                        case "debug" -> debug = false;
+                        case "saveLogs" -> saveLogs = true;
+                        case "database" -> database = "JSON";
+                        case "mysqlsettings" -> mysqlsettings = new MySQLSettings(
+                                    "localhost",
+                                    3306,
+                                    "name",
+                                    "user",
+                                    "password");
+                    }
                 }
-
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
         }
     }
