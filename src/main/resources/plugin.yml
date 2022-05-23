@@ -7,3 +7,101 @@ softdepend: [ Vault, PlaceholderAPI ]
 author: iRedTea
 description: Add revolutions to your server!
 website: https://github.com/iRedTea/FRevolutions
+
+commands:
+  revolution:
+    aliases: [ revolutions, rev ]
+    usage: /revolution <args>
+    description: Command for using revolutions
+    permission: frevolutions.use
+  frevolutions:
+    aliases: [ frev, revolutionadmin ]
+    usage: /frevolutions <args>
+    description: Some admin tools
+    permission: frevolutions.admin
+
+permissions:
+  frevolutions.all:
+    description: Gives all permissions of FRevolutions plugin
+    children:
+      frevolutions.player: true
+      frevolutions.admin: true
+  frevolutions.*:
+    description: This is just an alias for frevolutions.all
+    children:
+      frevolutions.all: true
+  frevolutions.admin:
+    description: Gives permission to admin functional of command /frevolutions
+    children:
+      frevolutions.admin.reload: true
+      frevolutions.admin.list: true
+      frevolutions.admin.disband: true
+  frevolutions.admin.*:
+    description: This is just an alias for frevolutions.admin
+    children:
+      frevolutions.admin: true
+  frevolutions.player:
+    description: Gives permission to base functional of command /revolution
+    default: true
+    children:
+      frevolutions.rprevention: true
+      frevolutions.create: true
+      frevolutions.invite: true
+      frevolutions.accept: true
+      frevolutions.kick: true
+      frevolutions.promote: true
+      frevolutions.demote: true
+      frevolutions.profile: true
+      frevolutions.deposit: true
+      frevolutions.withdraw: true
+      frevolutions.disband: true
+      frevolutions.leave: true
+      frevolutions.start: true
+      frevolutions.buypoints: true
+      frevolutions.asksupport: true
+  frevolutions.player.*:
+    description: This is just an alias for frevolutions.player
+    children:
+      frevolutions.player: true
+
+  frevolutions.rprevention:
+    description: Gives permission to /rprevention command
+  frevolutions.create:
+    description: Gives permission to create new revolution
+  frevolutions.invite:
+    description: Gives permission to invite in your revolution
+  frevolutions.accept:
+    description: Gives permission to accept a invitation in revolution
+  frevolutions.kick:
+    description: Gives permission to kick from your revolution
+  frevolutions.promote:
+    description: Gives permission to promote members of your revolution
+  frevolutions.demote:
+    description: Gives permission to demote members of your revolution
+  frevolutions.profile:
+    description: Gives permission to check profile of your revolution
+  frevolutions.deposit:
+    description: Gives permission to deposit money in revolution
+  frevolutions.withdraw:
+    description: Gives permission to withdraw money from your revolution
+  frevolutions.disband:
+    description: Gives permission to disband your revolution
+  frevolutions.disband.others:
+    description: This is just an alias for frevolutions.admin.disband
+    children:
+      frevolutions.admin.disband: true
+  frevolutions.leave:
+    description: Gives permission to leave from revolution
+  frevolutions.start:
+    description: Gives permission to start your revolution
+  frevolutions.buypoints:
+    description: Gives permission to buy points for your revolution
+  frevolutions.asksupport:
+    description: Gives permission to ask support for your revolution
+
+  frevolutions.admin.reload:
+    description: Gives permission to reload this plugin
+  frevolutions.admin.list:
+    description: Gives permission to see all revolutions
+  frevolutions.admin.disband:
+    description: Gives permission to disband every revolution if it not in final phase

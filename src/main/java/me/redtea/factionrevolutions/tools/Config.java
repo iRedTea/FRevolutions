@@ -5,6 +5,10 @@ import me.redtea.factionrevolutions.core.FRevolutions;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 public class Config {
     private final FRevolutions pl;
     private FileConfiguration config;
@@ -12,13 +16,11 @@ public class Config {
     private boolean debug;
     private boolean saveLogs;
     private String database;
-    private String hello;
     private MySQLSettings mysqlsettings;
 
     public Config(FRevolutions pl, FileConfiguration config) {
         this.pl = pl;
         this.config = config;
-
         reload();
     }
 
@@ -27,18 +29,39 @@ public class Config {
         pl.reloadConfig();
         config = pl.getConfig();
 
-        debug = config.getBoolean("settings.debug");
+        try {
+            debug = config.getBoolean("settings.debug");
+            saveLogs = config.getBoolean("settings.saveLogs");
+            database = config.getString("settings.database");
+            mysqlsettings = new MySQLSettings(
+                    config.getString("settings.mysql.host"),
+                    config.getInt("settings.mysql.port"),
+                    config.getString("settings.mysql.name"),
+                    config.getString("settings.mysql.user"),
+                    config.getString("settings.mysql.password")
+            );
+        } catch (Exception e) {
+            pl.getLogger().severe("Could not load config.yml! Error: " + e.getLocalizedMessage());
+            e.printStackTrace();
+        }
 
-        saveLogs = config.getBoolean("settings.saveLogs");
-        database = config.getString("settings.database");
-        hello = config.getString("hello");
-        mysqlsettings = new MySQLSettings(
-                config.getString("settings.mysql.host"),
-                config.getInt("settings.mysql.port"),
-                config.getString("settings.mysql.name"),
-                config.getString("settings.mysql.user"),
-                config.getString("settings.mysql.password")
-        );
+
+        for(Field f : this.getClass().getFields()) {
+            if(f.equals(null)) {
+                switch (f.getName()) {
+                    case "debug" -> debug = false;
+                    case "saveLogs" -> saveLogs = true;
+                    case "database" -> database = "JSON";
+                    case "mysqlsettings" -> mysqlsettings = new MySQLSettings(
+                                "localhost",
+                                3306,
+                                "name",
+                                "user",
+                                "password");
+                }
+
+            }
+        }
     }
 
     public boolean getDebug() {
@@ -54,16 +77,25 @@ public class Config {
         return database;
     }
 
-    public String getHello() {
-        return hello;
-    }
-
-    private String color(String s) {
-        return ChatColor.translateAlternateColorCodes('&', s);
-    }
-
     public MySQLSettings getMySQLSettings() {
         return mysqlsettings;
+    }
+
+    public void saveConfig() {
+        try {
+            pl.getConfig().set("settings.debug", debug);
+            pl.getConfig().set("settings.saveLogs", saveLogs);
+            pl.getConfig().set("settings.database", database);
+            pl.getConfig().set("settings.mysql.host", mysqlsettings.getHost());
+            pl.getConfig().set("settings.mysql.port", mysqlsettings.getPort());
+            pl.getConfig().set("settings.mysql.name", mysqlsettings.getName());
+            pl.getConfig().set("settings.mysql.user", mysqlsettings.getUser());
+            pl.getConfig().set("settings.mysql.password", mysqlsettings.getPassword());
+            pl.saveConfig();
+        } catch (Exception e) {
+            pl.getLogger().severe("Could not save config.yml! Error: " + e.getLocalizedMessage());
+            e.printStackTrace();
+        }
     }
 
     public class MySQLSettings {

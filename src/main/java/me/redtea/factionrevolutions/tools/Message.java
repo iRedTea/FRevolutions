@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public enum Message {
-    usage, reload, noPermissions;
+    usage_title, usage_format, reload, noPermissions, usage_noneArgs;
 
 
     private List<String> msg;
@@ -56,8 +56,11 @@ public enum Message {
     }
 
     public List<String> toList() {
-        ArrayList<String> list = new ArrayList<>(Message.this.msg);
-        return list;
+        ArrayList<String> result = new ArrayList<>();
+        for(String m : msg) {
+            result.add(ChatColor.translateAlternateColorCodes('&',m));
+        }
+        return result;
     }
 
     public class Sender {
@@ -110,7 +113,7 @@ public enum Message {
         public List<String> toList() {
             ArrayList<String> list = new ArrayList<>();
             for(String s : Message.this.msg) {
-                list.add(replacePlaceholders(s));
+                list.add(ChatColor.translateAlternateColorCodes('&', replacePlaceholders(s)));
             }
             return list;
         }

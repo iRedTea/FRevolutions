@@ -1,2 +1,4 @@
-package me.redtea.factionrevolutions.api;public class RPlayers {
+package me.redtea.factionrevolutions.api;
+
+public class RPlayers {
 }

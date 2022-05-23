@@ -2,7 +2,9 @@ package me.redtea.factionrevolutions.commands;
 
 import lombok.NonNull;
 import me.redtea.factionrevolutions.core.FRevolutions;
+import me.redtea.factionrevolutions.tools.Message;
 import org.bukkit.command.*;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,19 +21,37 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             pluginCommand.setExecutor(this);
             pluginCommand.setTabCompleter(this);
         }
+        //
     }
 
-    public abstract void execute(CommandSender sender, String label, String[] args);
-
-    public List<String> complete(CommandSender sender, String[] args) {
-        return null;
+    public List<String> complete() {
+        ArrayList<String> listOfSubCommands = new ArrayList<>();
+        for (Method m : this.getClass().getDeclaredMethods()) {
+            if (m.isAnnotationPresent(SubCommand.class)) {
+                SubCommand sub = m.getAnnotation(SubCommand.class);
+                listOfSubCommands.add(sub.name());
+                listOfSubCommands.addAll(Arrays.asList(sub.aliases()));
+            }
+        }
+        listOfSubCommands.add("help");
+        return listOfSubCommands;
     }
 
     @Override
     public boolean onCommand(@NonNull CommandSender sender, @NonNull Command command, @NonNull String label, String[] args) {
-        execute(sender, label, args);
-        for (Method m : this.getClass().getDeclaredMethods())
-        {
+        if(args.length == 0 || args[0].equalsIgnoreCase("help")) {
+            ArrayList<String> messages = new ArrayList<>(Message.usage_title.replace("%command%", command.getName()).toList());
+            for (Method m : this.getClass().getDeclaredMethods()) {
+                if (m.isAnnotationPresent(SubCommand.class)) {
+                    SubCommand sub = m.getAnnotation(SubCommand.class);
+                    messages.addAll(Message.usage_format.replace("%command%", command.getName()).replace("%alias%", sub.name()).
+                            replace("%description%", sub.description()).toList());
+                }
+            }
+            for(String message : messages) {
+                sender.sendMessage(message);
+            }
+        } else for (Method m : this.getClass().getDeclaredMethods()) {
             if (m.isAnnotationPresent(SubCommand.class))
             {
                 SubCommand sub = m.getAnnotation(SubCommand.class);
@@ -41,8 +61,11 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 if(args[0].equalsIgnoreCase(sub.name())) {
                     isMustBeProcessed = true;
                 } else {
-                    for(String ally : sub.aliases()) {
-                        if(args[0].equalsIgnoreCase(ally)) isMustBeProcessed = true;
+                    for(String alias : sub.aliases()) {
+                        if (args[0].equalsIgnoreCase(alias)) {
+                            isMustBeProcessed = true;
+                            break;
+                        }
                     }
                 }
 
@@ -54,7 +77,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                     if(!Objects.equals(sub.permission(), "")) {
                         if(sender.hasPermission(sub.permission())) {
                             try {
-                                m.invoke(sender, subArgs);
+                                m.invoke(this, sender, subArgs);
+                                break;
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);
                             }
@@ -62,6 +86,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                     }
                     try {
                         m.invoke(sender, subArgs);
+                        break;
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
                     }
@@ -74,8 +99,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public
-    List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
-        return filter(complete(sender, args), args);
+    List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+        return filter(complete(), args);
     }
 
     private List<String> filter(List<String> list, String[] args) {

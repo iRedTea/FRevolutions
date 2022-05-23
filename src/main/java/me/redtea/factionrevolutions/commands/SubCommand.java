@@ -12,5 +12,7 @@ public @interface SubCommand {
 
     String permission() default "";
 
-    String[] aliases();
+    String[] aliases() default {};
+
+    String description() default "";
 }

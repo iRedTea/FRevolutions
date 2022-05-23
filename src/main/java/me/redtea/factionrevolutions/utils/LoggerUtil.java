@@ -7,16 +7,6 @@ import org.bukkit.ChatColor;
 import java.io.*;
 import java.time.ZonedDateTime;
 
-/**
- * Система логирования.
- * Сохраняет логи в файлы, если опция "saveLogs" включена.
- * Поддерживает 4 вида логов:
- * sendLogger - отправить обычный лог
- * sendError - отправить ошибку
- * sendWarning - отправить предупреждение
- * sendDebug - отправить дебаг-лог. Отображается, если
- * включена опция "debug".
- */
 public class LoggerUtil {
     private final FRevolutions pl;
 

@@ -19,6 +19,10 @@ public class RevolutionSerializer implements JsonSerializer<Revolution>, JsonDes
             String id = null, leader = null;
             HashMap<String, Role> roles = null;
             ArrayList<String> members = null;
+            Phase phase = null;
+            int points = 0;
+            double balance = 0.0d;
+            ArrayList<String> sponsoredFactions = new ArrayList<>();
 
             if(jsonObject.has("id")) {
                 id = jsonObject.get("id").getAsString();
@@ -40,7 +44,25 @@ public class RevolutionSerializer implements JsonSerializer<Revolution>, JsonDes
                 members = context.deserialize(jsonObject.getAsJsonPrimitive("members"), token.getType());
             }
 
-            return new Revolution(UUID.fromString(id), leader, roles, members);
+            if(jsonObject.has("phase")) {
+                phase = Phase.valueOf(jsonObject.get("phase").getAsString());
+            }
+
+            if(jsonObject.has("points")) {
+                points = jsonObject.get("points").getAsInt();
+            }
+
+            if(jsonObject.has("balance")) {
+                balance = jsonObject.get("balance").getAsDouble();
+            }
+
+            if(jsonObject.has("sponsoredFactions")) {
+                val token = new TypeToken<List<String>>() {};
+
+                sponsoredFactions = context.deserialize(jsonObject.getAsJsonPrimitive("sponsoredFactions"), token.getType());
+            }
+
+            return new Revolution(UUID.fromString(id), leader, roles, members, phase, points, balance, sponsoredFactions);
         }
         return null;
     }
@@ -55,6 +77,11 @@ public class RevolutionSerializer implements JsonSerializer<Revolution>, JsonDes
 
             jsonObject.add("roles", context.serialize(revolution.getRoles()));
             jsonObject.add("members", context.serialize(revolution.getMembers()));
+
+            jsonObject.addProperty("phase", revolution.getPhase().toString());
+            jsonObject.addProperty("points", revolution.getPoints());
+
+            jsonObject.add("sponsoredFactions", context.serialize(revolution.getSponsoringFactions()));
 
             return jsonObject;
         }

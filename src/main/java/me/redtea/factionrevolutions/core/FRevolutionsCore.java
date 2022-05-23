@@ -2,9 +2,11 @@ package me.redtea.factionrevolutions.core;
 
 import me.redtea.factionrevolutions.db.IDatabase;
 import me.redtea.factionrevolutions.db.impl.*;
+import me.redtea.factionrevolutions.types.impl.Revolution;
 
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.UUID;
 
 
 public class FRevolutionsCore {
@@ -38,6 +40,13 @@ public class FRevolutionsCore {
     }
 
     public void removeRevolution(String id) {
-        //db.saveRevolution(id, null);
+        db.saveData(Revolution.class, id, null);
+    }
+    public Revolution getRevolution(UUID uuid) {
+        return db.getData(Revolution.class, uuid.toString());
+    }
+
+    public void saveRevolution(Revolution value) {
+        db.saveData(Revolution.class, value.getId().toString(), value);
     }
 }
