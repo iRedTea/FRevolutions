@@ -47,11 +47,12 @@ public enum Message {
             } catch (NullPointerException e) {
                 needRecover = true;
             }
+            if(needRecover) recover(file);
 
         }
     }
 
-    public void recover(File file) {
+    public static void recover(File file) {
         FileConfiguration c = YamlConfiguration.loadConfiguration(file);
         for(Message message : Message.values()) {
             boolean recover = false;
