@@ -13,7 +13,6 @@ import me.redtea.factionrevolutions.utils.ItemUtil;
 import me.redtea.factionrevolutions.utils.LoggerUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -68,25 +67,7 @@ public final class FRevolutions extends JavaPlugin {
             e.printStackTrace();
         }
 
-        File messages = new File(getDataFolder() + File.separator + "messages.yml");
-        if(!messages.exists()) {
-            try {
-                messages.createNewFile();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        InputStream ddlStream = FactionsPlugin.class.getClassLoader().getResourceAsStream("messages.yml");
-        try (FileOutputStream fos = new FileOutputStream(messages)) {
-            byte[] buf = new byte[2048];
-            int r;
-            while(-1 != (r = ddlStream.read(buf))) {
-                fos.write(buf, 0, r);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        Message.load(messages, PlaceholderAPIEnabled);
+        Message.load(this, conf.getLang(), PlaceholderAPIEnabled);
 
         new FRevolutionsCommand(this);
         new RevolutionCommand(this);
@@ -99,6 +80,10 @@ public final class FRevolutions extends JavaPlugin {
         System.out.println(ChatColor.GREEN + "############################################################");
         System.out.println(ChatColor.GREEN + "Plugin version: " + ChatColor.YELLOW + " " + getDescription().getVersion());
         System.out.println(ChatColor.GREEN + "Bukkit version: " + ChatColor.YELLOW + " " + Bukkit.getBukkitVersion());
+        System.out.println(ChatColor.GREEN + "Using language: " + ChatColor.YELLOW + " " + Message.getLangProperties().
+                getLanguage());
+        System.out.println(ChatColor.GREEN + "Localization version" + ChatColor.YELLOW + " " + Message.getLangProperties().
+                getVersion() + ChatColor.GREEN + " by " + ChatColor.YELLOW + Message.getLangProperties().getAuthor());
         log.sendLogger("Plugin successfully enabled!");
     }
 

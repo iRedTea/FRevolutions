@@ -1,14 +1,15 @@
 package me.redtea.factionrevolutions.tools;
 
 
+import lombok.Getter;
+import lombok.Setter;
 import me.redtea.factionrevolutions.core.FRevolutions;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
 
+@Getter
+@Setter
 public class Config {
     private final FRevolutions pl;
     private FileConfiguration config;
@@ -17,6 +18,8 @@ public class Config {
     private boolean saveLogs;
     private String database;
     private MySQLSettings mysqlsettings;
+
+    private String lang;
 
     public Config(FRevolutions pl, FileConfiguration config) {
         this.pl = pl;
@@ -28,10 +31,10 @@ public class Config {
         pl.saveDefaultConfig();
         pl.reloadConfig();
         config = pl.getConfig();
-
         try {
             debug = config.getBoolean("settings.debug");
             saveLogs = config.getBoolean("settings.saveLogs");
+            lang = config.getString("settings.lang");
             database = config.getString("settings.database");
             mysqlsettings = new MySQLSettings(
                     config.getString("settings.mysql.host"),
@@ -52,6 +55,7 @@ public class Config {
                     switch (f.getName()) {
                         case "debug" -> debug = false;
                         case "saveLogs" -> saveLogs = true;
+                        case "lang" -> lang = "en";
                         case "database" -> database = "JSON";
                         case "mysqlsettings" -> mysqlsettings = new MySQLSettings(
                                     "localhost",
@@ -65,34 +69,7 @@ public class Config {
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    public boolean getDebug() {
-        return debug;
-    }
-
-    public void setDebug(boolean debug) {
-        this.debug = debug;
-    }
-
-    public boolean isSaveLogs() {
-        return saveLogs;
-    }
-
-    public void setSaveLogs(boolean saveLogs) {
-        this.saveLogs = saveLogs;
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(String database) {
-        this.database = database;
-    }
-
-    public MySQLSettings getMySQLSettings() {
-        return mysqlsettings;
+        saveConfig();
     }
 
     public void saveConfig() {

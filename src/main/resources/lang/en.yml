@@ -1,0 +1,40 @@
+############################################################
+# +------------------------------------------------------+ #
+# |                 Localization file                    | #
+# +------------------------------------------------------+ #
+############################################################
+#Any message can be as a list
+#(
+#message:
+#- '1'
+#- '2'
+#)
+#and as a string (message: 'String').
+#This plugin have support for https://www.minecraftjson.com
+#and for PlaceholderAPI placeholders!
+
+langTitle:
+  #What language is localization written in?
+  language: ru
+  #Author of this localization
+  author: itzRedTea
+  #Version of this localization
+  version: 1.0
+  #Version of this plugin
+  pluginVersion: 0.0.0.0
+
+messages:
+
+  #Message when the plugin is reloaded
+  reload: '&2&l[!] &aFRevolutions success reloaded on %time% ms!'
+
+  #No permissions message
+  noPermissions: '&4&l[!] &cYou have not permissions for this!'
+
+  #Invalid usage messages
+  usage:
+    title: '&a[- Usage for command %command% -]'
+    format: '&a- &e/%command% %alias% - %description%'
+    invalidUsage:
+      - 'Invalid usage for this command!'
+      - 'Use "/rev help" for seeing list of all commands.'
