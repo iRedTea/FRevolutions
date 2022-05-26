@@ -21,7 +21,7 @@ langTitle:
   #Version of this localization
   version: 1.0
   #Version of this plugin
-  pluginVersion: 0.0.0.0
+  pluginVersion: '${project.version}'
 
 messages:
 

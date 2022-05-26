@@ -23,7 +23,7 @@ langTitle:
   #Версия локализации
   version: 1.0
   #Версия плагина, под которую сделана локализация
-  pluginVersion: 0.0.0.0
+  pluginVersion: '${project.version}'
 
 messages:
 

@@ -65,7 +65,7 @@ public enum Message {
     }
 
     public static void recover(FRevolutions plugin, String lang) {
-        File langFile = new File(plugin.getDataFolder() + "/lang/" + lang + ".yml");
+        File langFile = new File(plugin.getDataFolder() + File.separator +"lang" + File.separator + lang + ".yml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(langFile);
         for(Message message : Message.values()) {
             boolean recover = false;
@@ -84,7 +84,7 @@ public enum Message {
                 } catch (Throwable e) {
                     e.printStackTrace();
                 } try {
-                    InputStream ddlStream = FRevolutions.class.getClassLoader().getResourceAsStream("lang/" + lang + ".yml");
+                    InputStream ddlStream = FRevolutions.class.getClassLoader().getResourceAsStream("lang" + File.separator + lang + ".yml");
                     try (FileOutputStream fos = new FileOutputStream(tempFile)) {
                         byte[] buf = new byte[2048];
                         int r;
@@ -118,18 +118,18 @@ public enum Message {
         if(!folder.exists()) {
             try {
                 folder.createNewFile();
-                folder.mkdir();
+                folder.mkdirs();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
 
-        File langFile = new File(plugin.getDataFolder() + "/lang/"  +
+        File langFile = new File(plugin.getDataFolder() + File.separator + "lang"+ File.separator +
                 lang + ".yml");
         if(!langFile.exists()) {
             try {
                 langFile.createNewFile();
-                InputStream ddlStream = FactionsPlugin.class.getClassLoader().getResourceAsStream("lang/" + lang +".yml");
+                InputStream ddlStream = FactionsPlugin.class.getClassLoader().getResourceAsStream("lang" + File.separator + lang +".yml");
                 try (FileOutputStream fos = new FileOutputStream(langFile)) {
                     byte[] buf = new byte[2048];
                     int r;

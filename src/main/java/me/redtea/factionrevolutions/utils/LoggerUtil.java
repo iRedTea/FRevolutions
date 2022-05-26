@@ -22,7 +22,7 @@ public class LoggerUtil {
 
 
     public void sendDebug(String path) {
-        if(config.getDebug()) {
+        if(config.isDebug()) {
             String debugPrefix = ChatColor.YELLOW + "[DEBUG] ";
             System.out.println(prefix + debugPrefix + path);
         }

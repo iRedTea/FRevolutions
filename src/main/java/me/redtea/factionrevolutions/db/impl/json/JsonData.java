@@ -1,4 +1,4 @@
-package me.redtea.factionrevolutions.db.impl;
+package me.redtea.factionrevolutions.db.impl.json;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.val;
 import me.redtea.factionrevolutions.db.DataType;
 import me.redtea.factionrevolutions.db.IDatabase;
-import me.redtea.factionrevolutions.db.impl.adapter.*;
+import me.redtea.factionrevolutions.db.impl.json.adapter.*;
 import me.redtea.factionrevolutions.types.*;
 import me.redtea.factionrevolutions.types.impl.*;
 import org.bukkit.plugin.Plugin;
@@ -17,7 +17,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.*;
 
-public class DataJson implements IDatabase {
+public class JsonData implements IDatabase {
 
     private static final Gson GSON = new GsonBuilder()
             .registerTypeAdapter(Revolution.class, new RevolutionSerializer())
@@ -29,7 +29,7 @@ public class DataJson implements IDatabase {
 
     private Map<Class<?>, Map<String, Data>> dataMap = new HashMap<>();
 
-    public DataJson(@NonNull Plugin plugin) {
+    public JsonData(@NonNull Plugin plugin) {
         this.plugin = plugin;
 
         File file = new File(plugin.getDataFolder(), "database.json");

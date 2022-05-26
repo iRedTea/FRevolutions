@@ -6,31 +6,42 @@ import lombok.Setter;
 import me.redtea.factionrevolutions.core.FRevolutions;
 import org.bukkit.configuration.file.FileConfiguration;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
-@Getter
-@Setter
 public class Config {
-    private final FRevolutions pl;
+    private final FRevolutions plugin;
+
     private FileConfiguration config;
 
+    @CanRecover
     private boolean debug;
+
+    @CanRecover
     private boolean saveLogs;
+
+    @CanRecover
     private String database;
+
+    @CanRecover
     private MySQLSettings mysqlsettings;
 
+    @CanRecover
     private String lang;
 
-    public Config(FRevolutions pl, FileConfiguration config) {
-        this.pl = pl;
+    public Config(FRevolutions plugin, FileConfiguration config) {
+        this.plugin = plugin;
         this.config = config;
         reload();
     }
 
     public void reload() {
-        pl.saveDefaultConfig();
-        pl.reloadConfig();
-        config = pl.getConfig();
+        plugin.saveDefaultConfig();
+        plugin.reloadConfig();
+        config = plugin.getConfig();
         try {
             debug = config.getBoolean("settings.debug");
             saveLogs = config.getBoolean("settings.saveLogs");
@@ -44,29 +55,31 @@ public class Config {
                     config.getString("settings.mysql.password")
             );
         } catch (Exception e) {
-            pl.getLogger().severe("Could not load config.yml! Error: " + e.getLocalizedMessage());
+            plugin.getLogger().severe("Could not load config.yml! Error: " + e.getLocalizedMessage());
             e.printStackTrace();
         }
 
 
         for(Field f : this.getClass().getFields()) {
-            try {
-                if(f.get(this.getClass()).equals(null)) {
-                    switch (f.getName()) {
-                        case "debug" -> debug = false;
-                        case "saveLogs" -> saveLogs = true;
-                        case "lang" -> lang = "en";
-                        case "database" -> database = "JSON";
-                        case "mysqlsettings" -> mysqlsettings = new MySQLSettings(
+            if(f.isAnnotationPresent(CanRecover.class)) {
+                try {
+                    if(f.get(this.getClass()).equals(null)) {
+                        switch (f.getName()) {
+                            case "debug" -> debug = false;
+                            case "saveLogs" -> saveLogs = true;
+                            case "lang" -> lang = "en";
+                            case "database" -> database = "JSON";
+                            case "mysqlsettings" -> mysqlsettings = new MySQLSettings(
                                     "localhost",
                                     3306,
                                     "name",
                                     "user",
                                     "password");
+                        }
                     }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
             }
         }
         saveConfig();
@@ -74,17 +87,17 @@ public class Config {
 
     public void saveConfig() {
         try {
-            pl.getConfig().set("settings.debug", debug);
-            pl.getConfig().set("settings.saveLogs", saveLogs);
-            pl.getConfig().set("settings.database", database);
-            pl.getConfig().set("settings.mysql.host", mysqlsettings.getHost());
-            pl.getConfig().set("settings.mysql.port", mysqlsettings.getPort());
-            pl.getConfig().set("settings.mysql.name", mysqlsettings.getName());
-            pl.getConfig().set("settings.mysql.user", mysqlsettings.getUser());
-            pl.getConfig().set("settings.mysql.password", mysqlsettings.getPassword());
-            pl.saveConfig();
+            plugin.getConfig().set("settings.debug", debug);
+            plugin.getConfig().set("settings.saveLogs", saveLogs);
+            plugin.getConfig().set("settings.database", database);
+            plugin.getConfig().set("settings.mysql.host", mysqlsettings.getHost());
+            plugin.getConfig().set("settings.mysql.port", mysqlsettings.getPort());
+            plugin.getConfig().set("settings.mysql.name", mysqlsettings.getName());
+            plugin.getConfig().set("settings.mysql.user", mysqlsettings.getUser());
+            plugin.getConfig().set("settings.mysql.password", mysqlsettings.getPassword());
+            plugin.saveConfig();
         } catch (Exception e) {
-            pl.getLogger().severe("Could not save config.yml! Error: " + e.getLocalizedMessage());
+            plugin.getLogger().severe("Could not save config.yml! Error: " + e.getLocalizedMessage());
             e.printStackTrace();
         }
     }
@@ -124,4 +137,40 @@ public class Config {
             return password;
         }
     }
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public MySQLSettings getMySQLSettings() {
+        return mysqlsettings;
+    }
+
+    public boolean isSaveLogs() {
+        return saveLogs;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public String getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(String database) {
+        this.database = database;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    private @interface CanRecover {}
 }

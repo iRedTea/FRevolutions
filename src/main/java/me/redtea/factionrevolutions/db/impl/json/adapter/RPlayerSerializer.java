@@ -1,4 +1,4 @@
-package me.redtea.factionrevolutions.db.impl.adapter;
+package me.redtea.factionrevolutions.db.impl.json.adapter;
 
 import com.google.gson.*;
 import me.redtea.factionrevolutions.types.impl.*;

@@ -1,7 +1,7 @@
 package me.redtea.factionrevolutions.core;
 
 import me.redtea.factionrevolutions.db.IDatabase;
-import me.redtea.factionrevolutions.db.impl.*;
+import me.redtea.factionrevolutions.db.impl.json.JsonData;
 import me.redtea.factionrevolutions.types.impl.Revolution;
 
 import java.sql.SQLException;
@@ -23,14 +23,14 @@ public class FRevolutionsCore {
         String d = plugin.getConf().getDatabase().toUpperCase(Locale.ROOT);
         switch (d) {
             case "JSON" -> {
-                db = new DataJson(plugin);
+                db = new JsonData(plugin);
                 plugin.getLog().sendLogger("Using JSON database.");
             }
             case "MYSQL" ->
                 //db = new DataMySQL(plugin);
                 plugin.getLog().sendLogger("Using MYSQL database.");
             default -> {
-                db = new DataJson(plugin);
+                db = new JsonData(plugin);
                 plugin.getConf().setDatabase("JSON");
                 plugin.getLog().sendError("Unsupported database type in config.yml! Using JSON database.");
             }

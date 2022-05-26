@@ -24,13 +24,15 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         //
     }
 
-    public List<String> complete() {
+    public List<String> complete(CommandSender sender) {
         ArrayList<String> listOfSubCommands = new ArrayList<>();
         for (Method m : this.getClass().getDeclaredMethods()) {
             if (m.isAnnotationPresent(SubCommand.class)) {
                 SubCommand sub = m.getAnnotation(SubCommand.class);
-                listOfSubCommands.add(sub.name());
-                listOfSubCommands.addAll(Arrays.asList(sub.aliases()));
+                if(sender.hasPermission(sub.permission()) || sub.permission().equals("")) {
+                    listOfSubCommands.add(sub.name());
+                    listOfSubCommands.addAll(Arrays.asList(sub.aliases()));
+                }
             }
         }
         listOfSubCommands.add("help");
@@ -82,10 +84,10 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                             } catch (IllegalAccessException | InvocationTargetException e) {
                                 throw new RuntimeException(e);
                             }
-                        }
+                        } else Message.noPermissions.send(sender);
                     }
                     try {
-                        m.invoke(sender, subArgs);
+                        m.invoke(this, sender, subArgs);
                         break;
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         throw new RuntimeException(e);
@@ -100,7 +102,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     @Override
     public
     List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        return filter(complete(), args);
+        return filter(complete(sender), args);
     }
 
     private List<String> filter(List<String> list, String[] args) {
