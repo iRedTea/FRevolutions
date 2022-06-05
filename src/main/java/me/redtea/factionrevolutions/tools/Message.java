@@ -1,6 +1,7 @@
 package me.redtea.factionrevolutions.tools;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.massivecraft.factions.FactionsPlugin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,5 +1,7 @@
 package me.redtea.factionrevolutions.utils;
 
+import com.google.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import me.redtea.factionrevolutions.core.FRevolutions;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -12,12 +14,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class ItemUtil {
     private final FRevolutions plugin;
-
-    public ItemUtil(FRevolutions plugin) {
-        this.plugin = plugin;
-    }
 
     public ItemStack create(Material material, int amount, byte data, String displayName, ArrayList<String> lore) {
         ItemStack item = new ItemStack(material, amount, data);

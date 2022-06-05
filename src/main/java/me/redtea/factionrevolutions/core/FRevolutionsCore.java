@@ -1,5 +1,7 @@
 package me.redtea.factionrevolutions.core;
 
+import com.google.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import me.redtea.factionrevolutions.db.IDatabase;
 import me.redtea.factionrevolutions.db.impl.json.JsonData;
 import me.redtea.factionrevolutions.types.impl.Revolution;
@@ -8,18 +10,13 @@ import java.sql.SQLException;
 import java.util.Locale;
 import java.util.UUID;
 
-
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class FRevolutionsCore {
     private final FRevolutions plugin;
 
     private IDatabase db;
 
-    public FRevolutionsCore(FRevolutions plugin) throws SQLException {
-        this.plugin = plugin;
-        load();
-    }
-
-    public void load() {
+    public void init() {
         String d = plugin.getConf().getDatabase().toUpperCase(Locale.ROOT);
         switch (d) {
             case "JSON" -> {

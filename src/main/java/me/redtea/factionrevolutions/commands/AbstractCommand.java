@@ -4,7 +4,6 @@ import lombok.NonNull;
 import me.redtea.factionrevolutions.core.FRevolutions;
 import me.redtea.factionrevolutions.tools.Message;
 import org.bukkit.command.*;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
+
 
     public AbstractCommand(String command) {
         PluginCommand pluginCommand = FRevolutions.getInstance().getCommand(command);
@@ -101,7 +101,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public
-    List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
+    List<String> onTabComplete(@NonNull CommandSender sender, @NonNull Command command, @NonNull String alias, String[] args) {
         return filter(complete(sender), args);
     }
 

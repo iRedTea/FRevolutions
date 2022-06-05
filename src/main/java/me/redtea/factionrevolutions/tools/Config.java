@@ -1,7 +1,9 @@
 package me.redtea.factionrevolutions.tools;
 
 
+import com.google.inject.Inject;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import me.redtea.factionrevolutions.core.FRevolutions;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -12,10 +14,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class Config {
     private final FRevolutions plugin;
 
-    private FileConfiguration config;
+    private FileConfiguration config = plugin.getConfig();
 
     @CanRecover
     private boolean debug;
@@ -32,13 +35,15 @@ public class Config {
     @CanRecover
     private String lang;
 
-    public Config(FRevolutions plugin, FileConfiguration config) {
+    /*public Config(FRevolutions plugin, FileConfiguration config) {
         this.plugin = plugin;
         this.config = config;
         reload();
     }
 
-    public void reload() {
+     */
+
+    public void init() {
         plugin.saveDefaultConfig();
         plugin.reloadConfig();
         config = plugin.getConfig();

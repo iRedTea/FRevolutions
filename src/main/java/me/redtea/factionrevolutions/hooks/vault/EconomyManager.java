@@ -1,5 +1,7 @@
 package me.redtea.factionrevolutions.hooks.vault;
 
+import com.google.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import me.redtea.factionrevolutions.core.FRevolutions;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -7,17 +9,13 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 
 import net.milkbowl.vault.economy.Economy;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class EconomyManager {
     private Economy e;
 
-    private FRevolutions plugin;
+    private final FRevolutions plugin;
 
     private boolean enabled = true;
-
-    public EconomyManager(FRevolutions plugin) {
-        this.plugin = plugin;
-        init();
-    }
 
     public void init() {
         RegisteredServiceProvider<Economy> reg = Bukkit.getServicesManager().getRegistration(Economy.class);

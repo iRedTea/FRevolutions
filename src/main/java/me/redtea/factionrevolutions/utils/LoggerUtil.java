@@ -1,5 +1,7 @@
 package me.redtea.factionrevolutions.utils;
 
+import com.google.inject.Inject;
+import lombok.RequiredArgsConstructor;
 import me.redtea.factionrevolutions.core.FRevolutions;
 import me.redtea.factionrevolutions.tools.Config;
 import org.bukkit.ChatColor;
@@ -7,18 +9,13 @@ import org.bukkit.ChatColor;
 import java.io.*;
 import java.time.ZonedDateTime;
 
+@RequiredArgsConstructor(onConstructor_ = @Inject)
 public class LoggerUtil {
     private final FRevolutions pl;
 
     private final Config config;
 
-    private final String prefix;
-
-    public LoggerUtil(FRevolutions pl, Config config) {
-        this.pl = pl;
-        this.config = config;
-        this.prefix = ChatColor.RED + "[" + ChatColor.GRAY + pl.getDescription().getName() + ChatColor.RED + "] " + ChatColor.GRAY;
-    }
+    private String prefix = ChatColor.RED + "[" + ChatColor.GRAY + pl.getDescription().getName() + ChatColor.RED + "] " + ChatColor.GRAY;;
 
 
     public void sendDebug(String path) {
