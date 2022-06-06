@@ -26,6 +26,15 @@ public final class FRevolutions extends JavaPlugin {
     private static FRevolutions instance;
 
     @Inject
+    private FRevolutionsCommand fRevolutionsCommand;
+
+    @Inject
+    private RevolutionCommand revolutionCommand;
+
+    @Inject
+    private RPreventionCommand rPreventionCommand;
+
+    @Inject
     private Config conf;
 
     @Inject

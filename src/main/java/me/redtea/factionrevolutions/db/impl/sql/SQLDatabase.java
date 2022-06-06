@@ -1,17 +1,22 @@
 package me.redtea.factionrevolutions.db.impl.sql;
 
+import me.redtea.factionrevolutions.db.impl.sql.adapter.SQLAdapter;
+
 import java.sql.*;
 import java.util.concurrent.*;
 
-public interface SQLDatabase {
+public abstract class SQLDatabase {
 
-    ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
-    void execute(boolean async, String sql, Object...objects);
+    public final SQLAdapter adapter = new SQLAdapter();
 
-    ResultSet query(String sql, Object...objects);
-    void query(boolean async, String sql, ResponseHandler<ResultSet, SQLException> handler, Object...objects);
+    protected ExecutorService THREAD_POOL = Executors.newCachedThreadPool();
 
-    Connection getConnection();
+    public abstract void execute(boolean async, String sql, Object...objects);
 
-    void closeConnection() throws SQLException;
+    public abstract ResultSet query(String sql, Object...objects);
+    public abstract void query(boolean async, String sql, ResponseHandler<ResultSet, SQLException> handler, Object...objects);
+
+    public abstract Connection getConnection();
+
+    public abstract void closeConnection() throws SQLException;
 }

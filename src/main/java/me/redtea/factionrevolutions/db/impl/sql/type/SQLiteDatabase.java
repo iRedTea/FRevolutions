@@ -5,14 +5,19 @@ import me.redtea.factionrevolutions.db.impl.sql.ResponseHandler;
 import me.redtea.factionrevolutions.db.impl.sql.SQLDatabase;
 import me.redtea.factionrevolutions.db.impl.sql.SQLStatement;
 import me.redtea.factionrevolutions.types.Data;
+import me.redtea.factionrevolutions.types.Phase;
+import me.redtea.factionrevolutions.types.Role;
+import me.redtea.factionrevolutions.types.impl.RPlayer;
+import me.redtea.factionrevolutions.types.impl.Revolution;
 import org.sqlite.*;
 
 import java.io.*;
 import java.sql.*;
+import java.util.HashMap;
+import java.util.UUID;
 
 
-public class SQLiteDatabase implements SQLDatabase, IDatabase {
-
+public class SQLiteDatabase extends SQLDatabase implements IDatabase {
     private final SQLiteDataSource dataSource = new SQLiteDataSource();
     private Connection connection;
 
@@ -118,16 +123,89 @@ public class SQLiteDatabase implements SQLDatabase, IDatabase {
 
     @Override
     public <V extends Data> V getData(@NonNull Class<V> clazz, @NonNull String id) {
-        return null;
+        if(clazz.equals(RPlayer.class)) {
+            try {
+                ResultSet r = getPlayerDataFromDB(id);
+                return (V) new RPlayer(
+                        UUID.fromString(r.getString("uuid")),
+                        r.getBoolean("inRevolution"),
+                        r.getString("revolution")
+                );
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        } else if (clazz.equals(Revolution.class)) {
+            try {
+                ResultSet r = getRevolutionDataFromDB(id);
+                return (V) new Revolution(
+                        UUID.fromString(r.getString("id")),
+                        r.getString("leader"),
+                        (HashMap<String, Role>) adapter.deserialize(r.getString("roles")),
+                        adapter.stringToList(r.getString("members")),
+                        Phase.valueOf(r.getString("phase")),
+                        r.getInt("points"),
+                        r.getDouble("balance"),
+                        adapter.stringToList(r.getString("sponsoringFactions"))
+                );
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        throw new RuntimeException("Data with id " + id + " not exists!");
     }
+
+    public ResultSet getPlayerDataFromDB(String uuid) throws SQLException {
+        return query("SELECT * FROM rplayer WHERE uuid = ?", uuid);
+    }
+
+    public ResultSet getRevolutionDataFromDB(String id) throws SQLException {
+        return query("SELECT * FROM revolution WHERE id = ?", id);
+    }
+
 
     @Override
     public <V extends Data> void saveData(@NonNull Class<V> clazz, @NonNull String id, V value) {
-
+        if(value instanceof RPlayer) {
+            RPlayer player = (RPlayer) value;
+            execute(true, "INSERT INTO rplayer (uuid,inRevolution,revolution) VALUES (?,?,?) ON DUPLICATE KEY " +
+                            "UPDATE inRevolution = ?, revolution = ?;",
+                    id,
+                    player.isInRevolution(),
+                    player.getRevolution(),
+                    player.isInRevolution(),
+                    player.getRevolution()
+            );
+        } else if (value instanceof Revolution) {
+            Revolution revolution = (Revolution) value;
+            try {
+                execute(true, "INSERT INTO revolution (id,leader,roles,members,phase,points,balance,sponsoringFactions) VALUES (?,?,?,?,?,?,?,?) ON DUPLICATE KEY " +
+                                "UPDATE leader = ?, roles = ?, members = ?, phase = ?, points = ?, balance = ?, sponsoringFactions = ?;",
+                        id,
+                        revolution.getLeader(),
+                        adapter.serialize(revolution.getRoles()),
+                        adapter.listToString(revolution.getMembers()),
+                        revolution.getPhase().name(),
+                        revolution.getPoints(),
+                        revolution.getBalance(),
+                        adapter.listToString(revolution.getSponsoringFactions())
+                );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     @Override
     public void saveData() {
-
+        try {
+            this.refreshConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        load();
     }
 }
